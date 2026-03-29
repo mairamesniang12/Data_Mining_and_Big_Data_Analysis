@@ -1,0 +1,167 @@
+---
+title: "PCA Lab"
+author: "DM"
+date: "March 23, 2026"
+output:
+  word_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+##EXERCISE I
+
+## Data Reading
+```{r include = TRUE}
+A = matrix(c(9,12,10,15,9,10,5,10,8,11,13,14,11,13,8,3,15,10), nrow = 6, byrow = TRUE)
+Nframe = as.data.frame(A)
+m1 = c("Alexis", "Bea", "Claude","Damien", "Emilie", "Francis")
+m2 = c("Physics", "Maths", "English")
+row.names(A) = m1
+colnames(A) = m2
+head(A, 4)
+mean(A[,1])
+# Covariance matrix
+cov(A)*(5/6)
+# Correlation matrix
+cor(A)
+```
+
+## PCA Function
+
+
+```{r}
+library(FactoMineR)
+library(factoextra)
+# Unscaled PCA
+#res.pca <- PCA(A, graph = FALSE, scale.unit = FALSE)
+# Scaled PCA
+res.pca <- PCA(A, graph = FALSE)
+print(res.pca)
+```
+
+## Eigenvalues
+
+```{r}
+res.pca$eig
+eig.val = res.pca$eig
+eig.val
+# or
+eig.val <- get_eigenvalue(res.pca)
+eig.val
+```
+
+
+## Results for Variables
+
+```{r}
+var <- get_pca_var(res.pca)
+var
+```
+
+## Correlations between variables and components
+
+```{r}
+head(var$cor)
+```
+
+## Coordinates of variables
+
+```{r}
+head(var$coord)
+```
+
+## Quality of representation of variables
+
+```{r}
+head(var$cos2)
+```
+
+## Contributions of variables
+
+```{r}
+head(var$contrib,3)
+```
+
+
+## With quality of representation
+
+```{r}
+fviz_pca_var(res.pca, col.var = "cos2",
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), 
+             repel = TRUE)
+```
+
+
+```{r}
+# Contributions des variables ? la premi?re composante 
+fviz_contrib(res.pca, choice = "var", axes = 1, top = 10)
+# Contributions of variables ? la deuxi?me composante 
+fviz_contrib(res.pca, choice = "var", axes = 2, top = 10)
+```
+
+## Contributions
+
+```{r}
+# Mise en valeur des plus importantes 
+fviz_pca_var(res.pca, col.var = "contrib",
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07")
+             )
+```
+## The Individuals
+
+```{r}
+res.desc <- dimdesc(res.pca, axes = c(1,2), proba = 0.05)
+res.desc$Dim.2
+ind <- get_pca_ind(res.pca)
+ind
+```
+## Individuals (Dimension 1)
+
+```{r}
+res.desc$Dim.1
+
+```
+## Individuals: Coordinates
+
+```{r}
+head(ind$coord)
+```
+## Quality of representation
+
+```{r}
+# Qualit?
+head(ind$cos2)
+round(ind$cos2, 2)
+```
+## Contributions
+
+```{r}
+head(ind$contrib)
+```
+
+## Contributions on first two components
+
+```{r include=TRUE}
+fviz_contrib(res.pca, choice = "ind", axes = 1:2)
+```
+## Individuals plot
+
+```{r include=TRUE}
+fviz_pca_ind(res.pca, col.ind = "cos2",gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),repel = TRUE)
+```
+
+
+
+
+
+
+
+
+
+
+
+
